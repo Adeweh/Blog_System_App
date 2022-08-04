@@ -1,2 +1,4 @@
-package africa.semicolon.blogSystem.data.models;public class Comment {
+package africa.semicolon.blogSystem.data.models;
+
+public class Comment {
 }
