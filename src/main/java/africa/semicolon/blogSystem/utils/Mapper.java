@@ -8,7 +8,7 @@ import africa.semicolon.blogSystem.dtos.requests.RegisterUserRequest;
 public class Mapper {
     public static void map(RegisterUserRequest request, User user) {
 
-        user.setUserName(request.getEmail());
+        user.setUserName(request.getUserName());
         user.setPassword(request.getPassword());
     }
 

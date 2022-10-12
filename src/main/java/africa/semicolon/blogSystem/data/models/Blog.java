@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class Blog {
-
     @Id
     private String id;
     private String title;

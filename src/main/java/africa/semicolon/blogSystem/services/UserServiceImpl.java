@@ -9,6 +9,8 @@ import africa.semicolon.blogSystem.dtos.requests.RegisterUserRequest;
 import africa.semicolon.blogSystem.dtos.responses.CreateBlogResponse;
 import africa.semicolon.blogSystem.dtos.responses.LoginUserResponse;
 import africa.semicolon.blogSystem.dtos.responses.RegisterUserResponse;
+import africa.semicolon.blogSystem.exceptions.BlogServiceException;
+import africa.semicolon.blogSystem.exceptions.PasswordIncorrectException;
 import africa.semicolon.blogSystem.exceptions.UserDoesNotExistsException;
 import africa.semicolon.blogSystem.exceptions.UserExistsException;
 import africa.semicolon.blogSystem.utils.Mapper;
@@ -28,7 +30,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public RegisterUserResponse registerUser(RegisterUserRequest request) {
-        isExist(request);
+        userExist(request);
 
         User user = new User();
         Mapper.map(request, user);
@@ -40,16 +42,14 @@ public class UserServiceImpl implements UserService{
         return response;
 
     }
-    private void isExist(RegisterUserRequest request) {
-        User savedUser = userRepository.findByUserName(request.getEmail());
-        if (savedUser != null) throw new UserExistsException(request.getEmail() + "User already exists");
+    private void userExist(RegisterUserRequest request) {
+        User savedUser = userRepository.findByUserName(request.getUserName());
+        if (savedUser != null) throw new UserExistsException(request.getUserName() + "User already exists");
     }
-
 
     @Override
     public LoginUserResponse loginUser(LoginUserRequest request) {
-        notExist(request);
-
+        checkUser(request);
 
         LoginUserResponse response = new LoginUserResponse();
         response.setMessage(String.format("Logged in successfully. Welcome back!"));
@@ -57,38 +57,35 @@ public class UserServiceImpl implements UserService{
         return response;
 
     }
+    private void checkUser(LoginUserRequest request) {
+        User savedUser = userRepository.findByUserName(request.getUserName());
+        if(savedUser == null) throw new UserDoesNotExistsException("User not yet registered.");
+        else if (!Objects.equals(savedUser.getPassword(), request.getPassword())) throw new PasswordIncorrectException("This password is incorrect.");
+
+
+    }
 
     @Override
     public CreateBlogResponse createUserBlog(CreateBlogRequest request) {
+        checkBlog(request);
+
+
         Blog blog = new Blog();
         Mapper.map(request, blog);
         Blog savedBlog =blogService.createBlog(blog);
-        var foundUser = getUser(request.getUserId());
+        var foundUser = userRepository.findByUserName(request.getUserName());
         foundUser.setBlog(savedBlog);
         userRepository.save(foundUser);
 
         CreateBlogResponse response = new CreateBlogResponse();
         response.setMessage(String.format("Blog successfully created"));
-        response.setBlogId(savedBlog.getId());
 
         return response;
     }
-
-    private User getUser(String id) {
-        User foundUser = userRepository.findUserById(id);
-        return  foundUser;
-
+    private void checkBlog(CreateBlogRequest request) {
+        User registerUser = userRepository.findByUserName(request.getUserName());
+        if (registerUser.getBlog()!= null) throw new BlogServiceException("You cannot have more than a blog");
     }
 
-    private void notExist(LoginUserRequest request){
-
-
-
-        User savedUser = userRepository.findByUserName(request.getEmail());
-        if (savedUser == null) throw new UserDoesNotExistsException("Email not yet registered.");
-        else if (!Objects.equals(savedUser.getPassword(), request.getPassword())) throw new  UserDoesNotExistsException("Invalid Password");
-
-
-    }
 
 }

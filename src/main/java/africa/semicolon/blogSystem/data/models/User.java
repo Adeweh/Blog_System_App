@@ -14,8 +14,9 @@ public class User {
     @Id
     private String id;
     private String userName;
-    private String password;
     @DBRef
     private Blog blog;
+    private String email;
+    private String password;
 
 }
