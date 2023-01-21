@@ -1,15 +1,12 @@
 package africa.semicolon.blogSystem.services;
 
+import africa.semicolon.blogSystem.data.models.Article;
 import africa.semicolon.blogSystem.data.models.Blog;
 import africa.semicolon.blogSystem.data.models.User;
 import africa.semicolon.blogSystem.data.repositories.UserRepository;
-import africa.semicolon.blogSystem.dtos.requests.CreateBlogRequest;
-import africa.semicolon.blogSystem.dtos.requests.LoginUserRequest;
-import africa.semicolon.blogSystem.dtos.requests.RegisterUserRequest;
-import africa.semicolon.blogSystem.dtos.responses.CreateBlogResponse;
-import africa.semicolon.blogSystem.dtos.responses.LoginUserResponse;
-import africa.semicolon.blogSystem.dtos.responses.RegisterUserResponse;
-import africa.semicolon.blogSystem.exceptions.BlogServiceException;
+import africa.semicolon.blogSystem.dtos.requests.*;
+import africa.semicolon.blogSystem.dtos.responses.*;
+import africa.semicolon.blogSystem.exceptions.BlogExistsException;
 import africa.semicolon.blogSystem.exceptions.PasswordIncorrectException;
 import africa.semicolon.blogSystem.exceptions.UserDoesNotExistsException;
 import africa.semicolon.blogSystem.exceptions.UserExistsException;
@@ -69,10 +66,7 @@ public class UserServiceImpl implements UserService{
     public CreateBlogResponse createUserBlog(CreateBlogRequest request) {
         checkBlog(request);
 
-
-        Blog blog = new Blog();
-        Mapper.map(request, blog);
-        Blog savedBlog =blogService.createBlog(blog);
+        Blog savedBlog =blogService.createBlog(request);
         var foundUser = userRepository.findByUserName(request.getUserName());
         foundUser.setBlog(savedBlog);
         userRepository.save(foundUser);
@@ -82,9 +76,37 @@ public class UserServiceImpl implements UserService{
 
         return response;
     }
+
     private void checkBlog(CreateBlogRequest request) {
         User registerUser = userRepository.findByUserName(request.getUserName());
-        if (registerUser.getBlog()!= null) throw new BlogServiceException("You cannot have more than a blog");
+        if (registerUser.getBlog()!= null) throw new BlogExistsException("You cannot have more than a blog");
+    }
+    @Override
+    public AddArticleResponse addArticle(AddArticleRequest articleRequest) {
+        blogService.addArticle(articleRequest);
+
+        AddArticleResponse response = new AddArticleResponse();
+        response.setMessage(String.format("Article added to your blog"));
+
+
+        return response;
+    }
+
+    @Override
+    public DeleteArticleRequest deleteArticle(DeleteArticleRequest request) {
+        blogService.deleteArticle(request);
+
+        return request;
+    }
+
+    @Override
+    public FindArticleResponse viewArticle(FindArticleRequest findArticleRequest) {
+       Article newArticle= blogService.viewArticle(findArticleRequest);
+       FindArticleResponse response = new FindArticleResponse();
+       Mapper.map(response, newArticle);
+       response.setBlogName(newArticle.getBlogName());
+
+        return response;
     }
 
 

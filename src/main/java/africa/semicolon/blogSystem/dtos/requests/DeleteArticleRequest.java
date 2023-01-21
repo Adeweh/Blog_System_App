@@ -5,9 +5,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CreateBlogRequest {
-    private String name;
+public class DeleteArticleRequest {
+    private String title;
+    private String blogName;
     private String userName;
-    private String description;
-
 }

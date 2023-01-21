@@ -1,11 +1,7 @@
 package africa.semicolon.blogSystem.services;
 
-import africa.semicolon.blogSystem.dtos.requests.CreateBlogRequest;
-import africa.semicolon.blogSystem.dtos.requests.LoginUserRequest;
-import africa.semicolon.blogSystem.dtos.requests.RegisterUserRequest;
-import africa.semicolon.blogSystem.dtos.responses.CreateBlogResponse;
-import africa.semicolon.blogSystem.dtos.responses.LoginUserResponse;
-import africa.semicolon.blogSystem.dtos.responses.RegisterUserResponse;
+import africa.semicolon.blogSystem.dtos.requests.*;
+import africa.semicolon.blogSystem.dtos.responses.*;
 
 public interface UserService {
      RegisterUserResponse registerUser(RegisterUserRequest request);
@@ -15,4 +11,9 @@ public interface UserService {
      CreateBlogResponse createUserBlog(CreateBlogRequest request);
 
 
+     AddArticleResponse addArticle(AddArticleRequest articleRequest);
+
+    DeleteArticleRequest deleteArticle(DeleteArticleRequest deleteRequest);
+
+    FindArticleResponse viewArticle(FindArticleRequest findArticleRequest);
 }

@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CreateBlogResponse {
+public class AddArticleResponse {
     private String message;
 }

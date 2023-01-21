@@ -1,6 +1,6 @@
 package africa.semicolon.blogSystem.exceptions;
 
-public class PasswordIncorrectException extends RuntimeException {
+public class PasswordIncorrectException extends ApplicationException {
     public PasswordIncorrectException() {
     }
 
